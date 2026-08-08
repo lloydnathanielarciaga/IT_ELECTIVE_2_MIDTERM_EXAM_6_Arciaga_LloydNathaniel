@@ -1,0 +1,22 @@
+﻿@model PackagePickupMonitoringSystem.Models.Package
+
+<h2>Mark Package Claimed</h2>
+
+<div class="card">
+    <div class="card-body">
+        <h5 class="card-title">Tracking Number: @Model.TrackingNumber</h5>
+        <p class="card-text"><strong>Recipient:</strong> @Model.RecipientName</p>
+
+        <form asp-action="Claim" method="post">
+            <input type="hidden" name="id" value="@Model.Id" />
+
+            <div class="mb-3">
+                <label for="receivedBy" class="form-label">Received By (Resident/Employee Name)</label>
+                <input type="text" class="form-control" id="receivedBy" name="receivedBy" required />
+            </div>
+
+            <button type="submit" class="btn btn-success">Confirm Claim</button>
+            <a asp-action="Index" class="btn btn-secondary">Cancel</a>
+        </form>
+    </div>
+</div>
