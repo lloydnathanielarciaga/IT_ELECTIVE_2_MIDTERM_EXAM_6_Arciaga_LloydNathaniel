@@ -1,46 +1,56 @@
 ﻿using PackagePickupMonitoringSystem.Models;
+using System.Collections.Generic;
+using System.Linq;
+using System;
 
 namespace PackagePickupMonitoringSystem.Repositories
 {
     public static class PackageRepository
     {
-        private static List<Package> _packages = new List<Package>(); 
-        private static int _nextId = 1;
+        private static List<Package> packageList = new List<Package>();
+        private static int nextPkgId = 1;
 
-        public static IEnumerable<Package> GetAll() => _packages;
-
-        public static Package GetById(int id) => _packages.FirstOrDefault(p => p.Id == id);
-
-        public static void Add(Package package)
+        public static List<Package> GetAll()
         {
-            package.Id = _nextId++;
-            _packages.Add(package);
+            return packageList;
         }
 
-        public static void Update(Package package)
+        public static Package GetById(int id)
         {
-            var existing = GetById(package.Id);
-            if (existing != null)
+            return packageList.FirstOrDefault(p => p.Id == id);
+        }
+
+        public static void Add(Package pkg)
+        {
+            pkg.Id = nextPkgId;
+            nextPkgId++;
+            packageList.Add(pkg);
+        }
+
+        public static void Update(Package pkg)
+        {
+            Package oldPkg = GetById(pkg.Id);
+            if (oldPkg != null)
             {
-                existing.TrackingNumber = package.TrackingNumber;
-                existing.RecipientName = package.RecipientName;
-                existing.UnitNumber = package.UnitNumber;
-                existing.ContactNumber = package.ContactNumber;
-                existing.CourierCompany = package.CourierCompany;
-                existing.PackageType = package.PackageType;
-                existing.ExpectedPickupDate = package.ExpectedPickupDate;
-                existing.Notes = package.Notes;
+                oldPkg.TrackingNumber = pkg.TrackingNumber;
+                oldPkg.RecipientName = pkg.RecipientName;
+                oldPkg.UnitNumber = pkg.UnitNumber;
+                oldPkg.ContactNumber = pkg.ContactNumber;
+                oldPkg.CourierCompany = pkg.CourierCompany;
+                oldPkg.PackageType = pkg.PackageType;
+                oldPkg.ExpectedPickupDate = pkg.ExpectedPickupDate;
+                oldPkg.Notes = pkg.Notes;
             }
         }
 
-        public static void MarkAsClaimed(int id, string receivedBy)
+        public static void MarkAsClaimed(int id, string receiver)
         {
-            var package = GetById(id);
-            if (package != null)
+            Package p = GetById(id);
+            if (p != null)
             {
-                package.Status = "Claimed"; 
-                package.ClaimedDateTime = DateTime.Now;
-                package.ReceivedBy = receivedBy;
+                p.Status = "Claimed";
+                p.ClaimedDateTime = DateTime.Now;
+                p.ReceivedBy = receiver;
             }
         }
     }

@@ -2,72 +2,89 @@
 using Microsoft.AspNetCore.Mvc;
 using PackagePickupMonitoringSystem.Models;
 using PackagePickupMonitoringSystem.Repositories;
+using System.Collections.Generic;
+using System.Linq;
+using System;
 
 namespace PackagePickupMonitoringSystem.Controllers
 {
-    [Authorize] 
+    [Authorize]
     public class PackageController : Controller
     {
         public IActionResult Index(string searchQuery)
         {
-            var packages = PackageRepository.GetAll();
+            List<Package> packages = PackageRepository.GetAll();
 
-            if (!string.IsNullOrEmpty(searchQuery))
+            if (string.IsNullOrEmpty(searchQuery) == false)
             {
                 packages = packages.Where(p =>
-                    p.TrackingNumber.Contains(searchQuery, StringComparison.OrdinalIgnoreCase) ||
-                    p.RecipientName.Contains(searchQuery, StringComparison.OrdinalIgnoreCase)).ToList();
+                    p.TrackingNumber.ToLower().Contains(searchQuery.ToLower()) ||
+                    p.RecipientName.ToLower().Contains(searchQuery.ToLower())).ToList();
             }
 
             return View(packages);
         }
 
         [HttpGet]
-        public IActionResult Create() => View(); 
-
-        [HttpPost]
-        public IActionResult Create(Package package)
+        public IActionResult Create()
         {
-            if (ModelState.IsValid) 
-            {
-                PackageRepository.Add(package);
-                return RedirectToAction(nameof(Index));
-            }
-            return View(package);
+            return View();
         }
 
-        [HttpGet]
-        public IActionResult Edit(int id) 
-        {
-            var package = PackageRepository.GetById(id);
-            if (package == null) return NotFound();
-            return View(package);
-        }
-
+        // POST: Package/Create
         [HttpPost]
-        public IActionResult Edit(Package package)
+        public IActionResult Create(Package p)
         {
             if (ModelState.IsValid)
             {
-                PackageRepository.Update(package);
-                return RedirectToAction(nameof(Index));
+                PackageRepository.Add(p);
+                return RedirectToAction("Index");
             }
-            return View(package);
-        }
-
-        public IActionResult Details(int id) 
-        {
-            var package = PackageRepository.GetById(id);
-            if (package == null) return NotFound();
-            return View(package);
+            return View(p);
         }
 
         [HttpGet]
-        public IActionResult Claim(int id) 
+        public IActionResult Edit(int id)
         {
-            var package = PackageRepository.GetById(id);
-            if (package == null || package.Status == "Claimed") return NotFound();
-            return View(package);
+            Package p = PackageRepository.GetById(id);
+            if (p == null)
+            {
+                return NotFound();
+            }
+            return View(p);
+        }
+
+        [HttpPost]
+        public IActionResult Edit(Package p)
+        {
+            if (ModelState.IsValid)
+            {
+                PackageRepository.Update(p);
+                return RedirectToAction("Index");
+            }
+            return View(p);
+        }
+
+        public IActionResult Details(int id)
+        {
+            Package p = PackageRepository.GetById(id);
+            if (p == null)
+            {
+                return NotFound();
+            }
+            return View(p);
+        }
+
+        [HttpGet]
+        public IActionResult Claim(int id)
+        {
+            Package p = PackageRepository.GetById(id);
+
+            if (p == null || p.Status == "Claimed")
+            {
+                return NotFound();
+            }
+            return View(p);
         }
 
         [HttpPost]
@@ -75,12 +92,13 @@ namespace PackagePickupMonitoringSystem.Controllers
         {
             if (string.IsNullOrEmpty(receivedBy))
             {
-                ModelState.AddModelError("ReceivedBy", "Please specify who received the package.");
-                return View(PackageRepository.GetById(id));
+                ModelState.AddModelError("ReceivedBy", "Please type the name of the person receiving it.");
+                Package p = PackageRepository.GetById(id);
+                return View(p);
             }
 
             PackageRepository.MarkAsClaimed(id, receivedBy);
-            return RedirectToAction(nameof(Index));
+            return RedirectToAction("Index");
         }
     }
 }

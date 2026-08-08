@@ -1,9 +1,9 @@
 ﻿@model PackagePickupMonitoringSystem.Models.Package
 
-<h2>Package Details</h2>
+<h2>View Package Details</h2>
+<hr />
 
 <div>
-    <hr />
     <dl class="row">
         <dt class="col-sm-3">@Html.DisplayNameFor(model => model.TrackingNumber)</dt>
         <dd class="col-sm-9">@Html.DisplayFor(model => model.TrackingNumber)</dd>
@@ -25,7 +25,14 @@
 
         <dt class="col-sm-3">@Html.DisplayNameFor(model => model.Status)</dt>
         <dd class="col-sm-9">
-            <span class="badge @(Model.Status == "Claimed" ? "bg-success" : "bg-warning")">@Model.Status</span>
+            @if (Model.Status == "Claimed")
+            {
+                <span class="badge bg-success">Claimed</span>
+            }
+            else
+            {
+                <span class="badge bg-warning">Waiting for Pickup</span>
+            }
         </dd>
 
         @if (Model.Status == "Claimed")
@@ -41,10 +48,12 @@
         <dd class="col-sm-9">@Html.DisplayFor(model => model.Notes)</dd>
     </dl>
 </div>
+<br />
+
 <div>
     @if (Model.Status != "Claimed")
     {
-        <a asp-action="Edit" asp-route-id="@Model?.Id" class="btn btn-secondary">Edit</a>
+        <a asp-action="Edit" asp-route-id="@Model?.Id" class="btn btn-secondary">Edit Information</a>
     }
     <a asp-action="Index" class="btn btn-primary">Back to List</a>
 </div>

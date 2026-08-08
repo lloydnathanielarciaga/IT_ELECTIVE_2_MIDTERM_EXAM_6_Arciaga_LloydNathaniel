@@ -4,58 +4,68 @@ using Microsoft.AspNetCore.Mvc;
 using PackagePickupMonitoringSystem.Models;
 using PackagePickupMonitoringSystem.Repositories;
 using System.Security.Claims;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace PackagePickupMonitoringSystem.Controllers
 {
     public class AccountController : Controller
     {
         [HttpGet]
-        public IActionResult Login() => View();
+        public IActionResult Login()
+        {
+            return View();
+        }
 
         [HttpPost]
         public async Task<IActionResult> Login(string username, string password)
         {
-            var user = UserRepository.GetUserByUsername(username);
+            User loggedInUser = UserRepository.GetUserByUsername(username);
 
-            if (user != null && user.Password == password)
+            if (loggedInUser != null && loggedInUser.Password == password)
             {
-                var claims = new List<Claim>
-                {
-                    new Claim(ClaimTypes.Name, user.Username),
-                    new Claim("FullName", $"{user.FirstName} {user.LastName}")
-                };
+                List<Claim> userClaims = new List<Claim>();
+                userClaims.Add(new Claim(ClaimTypes.Name, loggedInUser.Username));
+                userClaims.Add(new Claim("FullName", loggedInUser.FirstName + " " + loggedInUser.LastName));
 
-                var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
-                await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(claimsIdentity));
+                ClaimsIdentity identity = new ClaimsIdentity(userClaims, CookieAuthenticationDefaults.AuthenticationScheme);
+                ClaimsPrincipal principal = new ClaimsPrincipal(identity);
+
+                await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal);
 
                 return RedirectToAction("Index", "Package");
             }
 
-            ModelState.AddModelError(string.Empty, "Invalid login attempt.");
+            ModelState.AddModelError(string.Empty, "Invalid login attempt. Try again.");
             return View();
         }
 
         [HttpGet]
-        public IActionResult Register() => View(); 
-
-        [HttpPost]
-        public IActionResult Register(User user)
+        public IActionResult Register()
         {
-            if (ModelState.IsValid) 
-            {
-                if (UserRepository.GetUserByUsername(user.Username) != null)
-                {
-                    ModelState.AddModelError("Username", "Username already exists.");
-                    return View(user);
-                }
-
-                UserRepository.AddUser(user);
-                return RedirectToAction("Login");
-            }
-            return View(user);
+            return View();
         }
 
-        public async Task<IActionResult> Logout() 
+        [HttpPost]
+        public IActionResult Register(User newUser)
+        {
+            if (ModelState.IsValid)
+            {
+                User existing = UserRepository.GetUserByUsername(newUser.Username);
+                if (existing != null)
+                {
+                    ModelState.AddModelError("Username", "That username is already taken!");
+                    return View(newUser);
+                }
+
+                UserRepository.AddUser(newUser);
+                return RedirectToAction("Login");
+            }
+
+            return View(newUser);
+        }
+
+        public async Task<IActionResult> Logout()
         {
             await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
             return RedirectToAction("Login");

@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System;
 
 namespace PackagePickupMonitoringSystem.Models
 {
@@ -7,7 +8,7 @@ namespace PackagePickupMonitoringSystem.Models
         public int Id { get; set; } 
 
         [Required]
-        [Display(Name = "Tracking Number")] 
+        [Display(Name = "Tracking Number")]
         public string TrackingNumber { get; set; } 
 
         [Required]
@@ -46,8 +47,8 @@ namespace PackagePickupMonitoringSystem.Models
         [Display(Name = "Received By")]
         public string? ReceivedBy { get; set; } 
 
-        public string Status { get; set; } = "Waiting for Pickup"; 
+        public string Status { get; set; } = "Waiting for Pickup";
 
-        public string? Notes { get; set; } 
+        public string? Notes { get; set; }
     }
 }

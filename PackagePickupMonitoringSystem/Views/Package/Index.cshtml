@@ -1,9 +1,10 @@
 ﻿@model IEnumerable<PackagePickupMonitoringSystem.Models.Package>
 
 <h2>Package Monitoring List</h2>
+<br />
 
 <form method="get" class="mb-3 d-flex">
-    <input type="text" name="searchQuery" class="form-control me-2" placeholder="Search by Tracking Number or Recipient..." />
+    <input type="text" name="searchQuery" class="form-control me-2" placeholder="Search by Tracking Number or Recipient Name..." />
     <button type="submit" class="btn btn-primary">Search</button>
 </form>
 
@@ -11,9 +12,9 @@
     <thead class="table-dark">
         <tr>
             <th>Tracking #</th>
-            <th>Recipient</th>
+            <th>Recipient Name</th>
             <th>Courier</th>
-            <th>Type</th>
+            <th>Package Type</th>
             <th>Arrival Time</th>
             <th>Claimed Time</th>
             <th>Status</th>
@@ -29,14 +30,32 @@
                 <td>@item.CourierCompany</td>
                 <td>@item.PackageType</td>
                 <td>@item.ArrivalDateTime.ToString("g")</td>
-                <td>@(item.ClaimedDateTime?.ToString("g") ?? "-")</td>
+
                 <td>
-                    <span class="badge @(item.Status == "Claimed" ? "bg-success" : "bg-warning")">
-                        @item.Status
-                    </span>
+                    @if (item.ClaimedDateTime != null)
+                    {
+                        @item.ClaimedDateTime?.ToString("g")
+                    }
+                    else
+                    {
+                        <span>-</span>
+                    }
                 </td>
+
                 <td>
-                    <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm btn-info">Details</a>
+                    @if (item.Status == "Claimed")
+                    {
+                        <span class="badge bg-success">Claimed</span>
+                    }
+                    else
+                    {
+                        <span class="badge bg-warning">Waiting for Pickup</span>
+                    }
+                </td>
+
+                <td>
+                    <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm btn-info text-white">Details</a>
+
                     @if (item.Status != "Claimed")
                     {
                         <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-secondary">Edit</a>
@@ -48,4 +67,5 @@
     </tbody>
 </table>
 
+<br />
 <a asp-action="Create" class="btn btn-primary">Register New Package</a>
