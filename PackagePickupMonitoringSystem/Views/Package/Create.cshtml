@@ -1,0 +1,61 @@
+﻿@model PackagePickupMonitoringSystem.Models.Package
+
+<h2>Register New Package</h2>
+
+<hr />
+<div class="row">
+    <div class="col-md-6">
+        <form asp-action="Create">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+            <div class="mb-3">
+                <label asp-for="TrackingNumber" class="control-label"></label>
+                <input asp-for="TrackingNumber" class="form-control" />
+                <span asp-validation-for="TrackingNumber" class="text-danger"></span>
+            </div>
+            <div class="mb-3">
+                <label asp-for="RecipientName" class="control-label"></label>
+                <input asp-for="RecipientName" class="form-control" />
+                <span asp-validation-for="RecipientName" class="text-danger"></span>
+            </div>
+            <div class="mb-3">
+                <label asp-for="UnitNumber" class="control-label"></label>
+                <input asp-for="UnitNumber" class="form-control" />
+            </div>
+            <div class="mb-3">
+                <label asp-for="ContactNumber" class="control-label"></label>
+                <input asp-for="ContactNumber" class="form-control" />
+                <span asp-validation-for="ContactNumber" class="text-danger"></span>
+            </div>
+            <div class="mb-3">
+                <label asp-for="CourierCompany" class="control-label"></label>
+                <input asp-for="CourierCompany" class="form-control" />
+                <span asp-validation-for="CourierCompany" class="text-danger"></span>
+            </div>
+            <div class="mb-3">
+                <label asp-for="PackageType" class="control-label"></label>
+                <input asp-for="PackageType" class="form-control" />
+                <span asp-validation-for="PackageType" class="text-danger"></span>
+            </div>
+            <div class="mb-3">
+                <label asp-for="ExpectedPickupDate" class="control-label"></label>
+                <input asp-for="ExpectedPickupDate" class="form-control" type="date" />
+            </div>
+            <div class="mb-3">
+                <label asp-for="Notes" class="control-label"></label>
+                <textarea asp-for="Notes" class="form-control"></textarea>
+            </div>
+
+            <div class="mb-3">
+                <input type="submit" value="Register Package" class="btn btn-primary" />
+                <a asp-action="Index" class="btn btn-secondary">Back to List</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

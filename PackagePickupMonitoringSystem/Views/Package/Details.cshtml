@@ -1,0 +1,50 @@
+﻿@model PackagePickupMonitoringSystem.Models.Package
+
+<h2>Package Details</h2>
+
+<div>
+    <hr />
+    <dl class="row">
+        <dt class="col-sm-3">@Html.DisplayNameFor(model => model.TrackingNumber)</dt>
+        <dd class="col-sm-9">@Html.DisplayFor(model => model.TrackingNumber)</dd>
+
+        <dt class="col-sm-3">@Html.DisplayNameFor(model => model.RecipientName)</dt>
+        <dd class="col-sm-9">@Html.DisplayFor(model => model.RecipientName)</dd>
+
+        <dt class="col-sm-3">@Html.DisplayNameFor(model => model.UnitNumber)</dt>
+        <dd class="col-sm-9">@Html.DisplayFor(model => model.UnitNumber)</dd>
+
+        <dt class="col-sm-3">@Html.DisplayNameFor(model => model.ContactNumber)</dt>
+        <dd class="col-sm-9">@Html.DisplayFor(model => model.ContactNumber)</dd>
+
+        <dt class="col-sm-3">@Html.DisplayNameFor(model => model.CourierCompany)</dt>
+        <dd class="col-sm-9">@Html.DisplayFor(model => model.CourierCompany)</dd>
+
+        <dt class="col-sm-3">@Html.DisplayNameFor(model => model.ArrivalDateTime)</dt>
+        <dd class="col-sm-9">@Html.DisplayFor(model => model.ArrivalDateTime)</dd>
+
+        <dt class="col-sm-3">@Html.DisplayNameFor(model => model.Status)</dt>
+        <dd class="col-sm-9">
+            <span class="badge @(Model.Status == "Claimed" ? "bg-success" : "bg-warning")">@Model.Status</span>
+        </dd>
+
+        @if (Model.Status == "Claimed")
+        {
+            <dt class="col-sm-3">@Html.DisplayNameFor(model => model.ClaimedDateTime)</dt>
+            <dd class="col-sm-9">@Html.DisplayFor(model => model.ClaimedDateTime)</dd>
+
+            <dt class="col-sm-3">@Html.DisplayNameFor(model => model.ReceivedBy)</dt>
+            <dd class="col-sm-9">@Html.DisplayFor(model => model.ReceivedBy)</dd>
+        }
+
+        <dt class="col-sm-3">@Html.DisplayNameFor(model => model.Notes)</dt>
+        <dd class="col-sm-9">@Html.DisplayFor(model => model.Notes)</dd>
+    </dl>
+</div>
+<div>
+    @if (Model.Status != "Claimed")
+    {
+        <a asp-action="Edit" asp-route-id="@Model?.Id" class="btn btn-secondary">Edit</a>
+    }
+    <a asp-action="Index" class="btn btn-primary">Back to List</a>
+</div>
